@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: initpod
+  labels: 
+    app: flask-api-be
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key:  role
+                operator: In
+                values:  
+                  - worker-2
+  initContainers:
+    - name: find-my-svc
+      image: busybox:1.28.4
+      command: ['sh','-c','until nslookup my-svc; do echo waiting for my-svc service; sleep 1; done; echo service found, now starting application']
+  containers:
+    - name: app
+      image: tusharthapliyal/flask-api:2
+      ports:
+        - containerPort: 5000
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80

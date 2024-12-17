@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: multi-container-pod
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key:  role
+                operator: In
+                values:  
+                  - worker-2
+  containers:
+    - name: app
+      image: tusharthapliyal/flask-api:2
+      ports:
+        - containerPort: 5000
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80

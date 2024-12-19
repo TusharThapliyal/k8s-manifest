@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-deploy  # this needs to be a valid DNS name
+
+spec:
+  replicas: 20
+  selector:
+    matchLabels:
+      app: hello-world
+  
+  revisionHistoryLimit: 5 #how many revisions you can see in rollout history
+  progressDeadlineSeconds: 300
+  minReadySeconds: 10
+  
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: # here you define config for rolling update
+      maxSurge: 1
+      maxUnavailable: 1
+  
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+        - name: hello-pod
+          image: nigelpoulton/k8sbook:2.0
+          ports:
+            - containerPort: 8080
+    
